@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component // singleton
-public class HelloTraceV1 {
+public class HelloTraceV2 {
     private static final String START_PREFIX = "-->";
     private static final String COMPLETE_PREFIX = "<--";
     private static final String EX_PREFIX = "<X-";
@@ -21,6 +21,16 @@ public class HelloTraceV1 {
         return new TraceStatus(traceId, startTimeMs, message);
     }
 
+    //add in V2
+    public TraceStatus beginSync(TraceId beforeTraceId, String message){
+//        TraceId traceId = new TraceId();
+        TraceId nextId = beforeTraceId.createNextId();
+        Long startTimeMs = System.currentTimeMillis();
+
+        // first {} in traceId, second {} in traceLevel, third {} in message
+        log.info("[{}] {}{}", nextId.getId(), addSpace(START_PREFIX, nextId.getLevel()), message);
+        return new TraceStatus(nextId, startTimeMs, message);
+    }
     public void end(TraceStatus status) {
         complete(status, null);
     }
@@ -49,6 +59,5 @@ public class HelloTraceV1 {
         }
         return sb.toString();
     }
-
 
 }
